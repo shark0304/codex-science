@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Artifact Studio"
+  short_description: "Traceable figures, reports, and manuscripts"
+  default_prompt: "Use $artifact-studio to turn my results into a reproducible scientific artifact."

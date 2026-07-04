@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Workbench"
+  short_description: "Auditable, reproducible scientific research workflows"
+  default_prompt: "Use $science-workbench to turn my research question into an auditable study plan."

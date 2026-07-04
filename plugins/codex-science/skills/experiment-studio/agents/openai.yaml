@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Experiment Studio"
+  short_description: "Preregistered experiments and controlled compute"
+  default_prompt: "Use $experiment-studio to design a falsifiable and reproducible experiment."

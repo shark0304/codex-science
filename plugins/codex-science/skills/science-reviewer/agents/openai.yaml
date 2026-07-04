@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Reviewer"
+  short_description: "Adversarial scientific and reproducibility review"
+  default_prompt: "Use $science-reviewer to audit my study for unsupported claims and reproducibility failures."

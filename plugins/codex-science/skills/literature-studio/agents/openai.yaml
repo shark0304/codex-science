@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Literature Studio"
+  short_description: "Evidence-led literature search and synthesis"
+  default_prompt: "Use $literature-studio to build a traceable literature synthesis for my research question."

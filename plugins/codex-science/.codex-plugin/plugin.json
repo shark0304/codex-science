@@ -1,0 +1,29 @@
+{
+  "name": "codex-science",
+  "version": "0.2.0",
+  "description": "An auditable, reproducible scientific research workbench for Codex",
+  "author": {
+    "name": "shark0304"
+  },
+  "homepage": "https://github.com/shark0304/codex-science",
+  "repository": "https://github.com/shark0304/codex-science",
+  "license": "MIT",
+  "keywords": ["science", "research", "reproducibility", "literature", "experiments"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Science",
+    "shortDescription": "Auditable research from question to artifact",
+    "longDescription": "Coordinate evidence-led literature research, dataset lineage, preregistered experiments, approval-aware compute, reproducible scientific artifacts, independent review, study forks, and final research packets.",
+    "developerName": "shark0304",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Turn my research question into an auditable end-to-end study.",
+      "Build a source-to-claim literature synthesis with disconfirming evidence.",
+      "Independently audit this study and produce a reproducible handoff packet."
+    ]
+  }
+}
