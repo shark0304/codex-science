@@ -430,7 +430,15 @@ def init_command(args: argparse.Namespace) -> int:
     )
     if code == 0:
         compute_status(args.root, write=True)
-        print("Next: edit .science/QUESTION.md, PLAN.md, and GOVERNANCE.md, then run `science.py next --root <root>`." )
+        for script, extra in (
+            ("parity_report.py", ["--save"]),
+            ("resume_project.py", []),
+            ("build_research_portal.py", []),
+        ):
+            generated = run_delegate(HERE / script, ["--root", str(args.root), *extra])
+            if generated != 0:
+                return generated
+        print("Next: edit .science/QUESTION.md, PLAN.md, and GOVERNANCE.md, then run `science.py next --root <root>`.")
     return code
 
 
@@ -535,15 +543,28 @@ def remainder_command(args: argparse.Namespace, script: pathlib.Path, prefix: li
 
 def handoff_command(args: argparse.Namespace) -> int:
     compute_status(args.root, write=True)
+    for script, extra in (
+        ("parity_report.py", ["--save"]),
+        ("resume_project.py", []),
+        ("build_research_portal.py", []),
+    ):
+        code = simple_delegate(args, script, extra)
+        if code != 0:
+            print(f"Handoff stopped: {script} failed.", file=sys.stderr)
+            return code
     validation = simple_delegate(args, "validate_science_project.py")
     if validation != 0:
         print("Handoff stopped: structural validation failed.", file=sys.stderr)
         return validation
     audit = simple_delegate(args, "audit_project.py")
+    simple_delegate(args, "build_research_portal.py")
     packet = simple_delegate(args, "build_research_packet.py")
     if packet != 0:
         return packet
     final = compute_status(args.root, write=True)
+    simple_delegate(args, "resume_project.py")
+    simple_delegate(args, "parity_report.py", ["--save"])
+    simple_delegate(args, "build_research_portal.py")
     gaps = [
         str(item["id"])
         for item in final["stages"]
@@ -600,10 +621,28 @@ def parser() -> argparse.ArgumentParser:
     next_step.add_argument("--json", action="store_true")
     next_step.add_argument("--limit", type=int, default=3)
     next_step.set_defaults(func=next_command)
-    for name, script in (("validate", "validate_science_project.py"), ("audit", "audit_project.py"), ("packet", "build_research_packet.py"), ("capabilities", "capability_report.py")):
+    for name, script in (
+        ("validate", "validate_science_project.py"),
+        ("audit", "audit_project.py"),
+        ("packet", "build_research_packet.py"),
+        ("capabilities", "capability_report.py"),
+        ("portal", "build_research_portal.py"),
+        ("resume", "resume_project.py"),
+    ):
         command = commands.add_parser(name)
         command.add_argument("--root", type=pathlib.Path, required=True)
         command.set_defaults(func=lambda args, selected=script: simple_delegate(args, selected))
+    parity = commands.add_parser("parity", help="Audit public Claude Science feature conformance")
+    parity.add_argument("--root", type=pathlib.Path, required=True)
+    parity.add_argument("--json", action="store_true")
+    parity.add_argument("--save", action="store_true")
+    parity.set_defaults(
+        func=lambda args: simple_delegate(
+            args,
+            "parity_report.py",
+            (["--json"] if args.json else []) + (["--save"] if args.save else []),
+        )
+    )
     handoff = commands.add_parser("handoff", help="Refresh status, validate, audit, and build a packet")
     handoff.add_argument("--root", type=pathlib.Path, required=True)
     handoff.set_defaults(func=handoff_command)

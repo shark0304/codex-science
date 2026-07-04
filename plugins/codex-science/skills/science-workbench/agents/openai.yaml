@@ -1,4 +1,4 @@
 interface:
   display_name: "Codex Science Research Concierge"
-  short_description: "One-stop auditable research from idea to handoff"
-  default_prompt: "Use $science-workbench as my research concierge: take my goal, do the work you can, and keep me oriented from question to reproducible handoff."
+  short_description: "Visual, auditable research from idea to handoff"
+  default_prompt: "Use $science-workbench as my research concierge: take my goal, do the work you can, refresh the visual research portal, and keep me oriented from question to reproducible handoff."

@@ -21,6 +21,8 @@ It is an independent implementation inspired by publicly documented scientific-a
 - A versioned eight-task transparent benchmark for same-task scientific-agent regression and exploratory comparison.
 - Timestamped Markdown research packets suitable for supervisors, collaborators, reviewers, and future sessions.
 - A profile-aware workflow dashboard that distinguishes recorded coverage from scientific quality and refuses premature completion claims.
+- A self-contained visual research portal plus a portable new-thread resume capsule.
+- A dynamic, machine-readable audit of public Claude Science feature coverage with explicit `ready`, `degraded`, and `unavailable` states.
 
 ## Install
 
@@ -48,6 +50,8 @@ You do not need to choose scripts or specialist skills. State the outcome you ne
 - the next falsifiable action.
 
 It maintains `.science/STATUS.md` as a compact control panel. Required stages can be marked `not-requested` when they genuinely do not apply; they are never marked passed merely to improve a percentage.
+
+It also generates `.science/PORTAL.html`, a local read-only research workspace that brings workflow stages, next actions, evidence, datasets, experiments, artifacts, services, providers, and public capability gaps into one visual page. `.science/RESUME.md` carries the minimum durable context into a new Codex thread or another computer. Both remain plain files under your control.
 
 ## Workflow
 
@@ -78,6 +82,9 @@ python3 "$SCIENCE" init --root . --title "My study" \
   --question "What would falsify hypothesis H?" --profile standard --domain general
 python3 "$SCIENCE" status --root .
 python3 "$SCIENCE" next --root .
+python3 "$SCIENCE" portal --root .
+python3 "$SCIENCE" resume --root .
+python3 "$SCIENCE" parity --root . --save
 python3 "$SCIENCE" handoff --root .
 ```
 
@@ -138,7 +145,7 @@ Use identical tasks, tools, data, time limits and attempt counts for a compariso
 
 The plugin aligns with the public Claude Science workflow at the methods layer: coordinating and specialist workflows, literature synthesis, auditable artifacts, local research state, compute planning, persistent memory, study forks, reviewer passes, and optional scientific tools.
 
-Some product capabilities necessarily remain environment-dependent:
+Run `python3 "$SCIENCE" parity --root . --save` for the current environment-aware audit. The report deliberately does not claim model-quality, benchmark, proprietary-service, or complete product parity. Some product capabilities necessarily remain environment-dependent:
 
 - Scientific databases and connectors require separate installation, authentication, licensing, and institutional authorization.
 - External skills and plugins require independent license, security, data-boundary and compatibility review before approval in a loop.

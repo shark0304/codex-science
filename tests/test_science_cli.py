@@ -62,6 +62,7 @@ class ScienceCliTest(unittest.TestCase):
         catalog = json.loads(self.run_cli("services", "--json").stdout)
         self.assertEqual(catalog["schema"], "codex-science.service-catalog.v1")
         self.assertGreaterEqual(len(catalog["services"]), 10)
+        self.assertIn("workspace-portal", {item["id"] for item in catalog["services"]})
 
         secrets = {
             "CROSSREF_MAILTO": "private-contact@example.org",

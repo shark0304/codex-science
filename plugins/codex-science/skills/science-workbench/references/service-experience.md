@@ -28,4 +28,6 @@ Use `scripts/science.py status` after meaningful state changes and `scripts/scie
 
 Use `scripts/science.py doctor` to discover local tools and provider configuration without exposing secret values. A discovered executable or configured credential does not prove authorization, compatibility, available quota, or successful execution.
 
+Use `scripts/science.py portal` to refresh `.science/PORTAL.html`, the self-contained read-only workspace view. Use `scripts/science.py resume` before changing threads or computers and start the next thread from `.science/RESUME.md`. Use `scripts/science.py parity --save` to record an environment-aware comparison against the public Claude Science feature description; keep `ready`, `degraded`, and `unavailable` distinctions visible.
+
 Use `scripts/science.py handoff` before a milestone or delivery. A generated packet may still be blocked by audit findings, expert review, ethics, safety, publication, compute, or data-governance decisions.

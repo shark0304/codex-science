@@ -15,6 +15,8 @@ For a vague or multi-stage request, read [references/service-experience.md](refe
 
 Keep the user oriented with four compact facts: current outcome, evidence or artifact created, unresolved uncertainty, and next falsifiable action. Never report a capability, specialist pass, connector search, reviewer check, or computation as completed unless it actually ran and left inspectable evidence.
 
+Treat `.science/PORTAL.html` as the visual front door for Standard and Deep studies. Refresh it after meaningful state changes so the scientist can inspect workflow coverage, evidence, data, experiments, artifacts, services, and public capability gaps in one local page. Treat `.science/RESUME.md` as the cross-thread continuity capsule and `.science/PARITY.json` as a dynamic public-feature audit. Neither file is evidence of scientific truth or model-level parity.
+
 ## Select depth
 
 - **Quick**: one source, narrow calculation, or short critique. Do not create a full workspace unless useful.
@@ -31,6 +33,7 @@ python3 scripts/science.py init --root <project-root> \
   --profile <quick|standard|deep> --domain <domain>
 python3 scripts/science.py doctor --root <project-root> --save
 python3 scripts/science.py next --root <project-root>
+python3 scripts/science.py portal --root <project-root>
 ```
 
 Do not overwrite an existing `.science/` directory. Run `migrate_project.py` when the validator reports an older schema.
@@ -55,6 +58,7 @@ Do not claim a specialist pass occurred unless it actually occurred. If a requir
 - Register sources, claims, searches, paper cards, datasets, transformations, experiment plans/results, compute approvals/results, environments, artifacts, reviews, and forks.
 - For iterative work, preserve loop contracts, capability locks, traces, evaluations, failures, decisions, resource limits, and stop reasons under `.science/loop/`.
 - Use `fork_study.py` for a new analytical branch; use version control for code and full-project history.
+- Refresh `status`, `resume`, `parity`, and `portal` before a thread handoff or milestone. In a new thread, inspect `.science/RESUME.md` before continuing.
 - Never store credentials, participant identifiers, protected health information, controlled raw data, or proprietary content in public ledgers.
 
 Follow [references/project-contract.md](references/project-contract.md) for layout and schemas, [references/coordination-protocol.md](references/coordination-protocol.md) for stage gates, and [references/capability-matrix.md](references/capability-matrix.md) for the public Claude Science alignment boundary.
@@ -67,6 +71,9 @@ Pause before remote/paid/shared compute, large downloads, external writes, publi
 
 ```bash
 python3 scripts/science.py status --root <project-root>
+python3 scripts/science.py parity --root <project-root> --save
+python3 scripts/science.py resume --root <project-root>
+python3 scripts/science.py portal --root <project-root>
 python3 scripts/science.py handoff --root <project-root>
 ```
 

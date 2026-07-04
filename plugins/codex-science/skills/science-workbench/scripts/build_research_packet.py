@@ -78,6 +78,9 @@ def main() -> int:
     eval_score_paths = sorted((science / "evals").glob("*/scores.json"))
     workflow_path = science / "workflow.json"
     status_path = science / "STATUS.json"
+    parity_path = science / "PARITY.json"
+    resume_path = science / "RESUME.md"
+    portal_path = science / "PORTAL.html"
     loop_paths: dict[str, pathlib.Path] = {}
     if (science / "loop/contract.json").is_file():
         loop_paths = {
@@ -140,6 +143,7 @@ def main() -> int:
         eval_summaries = [json.loads(path.read_text(encoding="utf-8")) for path in eval_score_paths]
         workflow = json.loads(workflow_path.read_text(encoding="utf-8")) if workflow_path.is_file() else {}
         workflow_status = json.loads(status_path.read_text(encoding="utf-8")) if status_path.is_file() else {}
+        parity = json.loads(parity_path.read_text(encoding="utf-8")) if parity_path.is_file() else {}
     except (json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -250,6 +254,20 @@ def main() -> int:
             ),
             str(workflow_status.get("boundary", "")),
         ]
+    parity_sections = []
+    if parity:
+        parity_sections = [
+            "## Public capability conformance",
+            table(
+                ["Capability", "Status", "Local evidence", "Remaining gap"],
+                [
+                    [item.get("label"), item.get("status"), item.get("evidence"), item.get("gap")]
+                    for item in parity.get("capabilities", [])
+                    if isinstance(item, dict)
+                ],
+            ),
+            str(parity.get("boundary", "")),
+        ]
     sections = [
         f"# {study.get('title', 'Research packet')}",
         f"Generated: `{generated_at}`  \nStudy status: `{study.get('status', 'unknown')}`  \nStudy ID: `{study.get('id', 'unknown')}`",
@@ -262,6 +280,10 @@ def main() -> int:
         "## Capability inventory",
         table(["Capability", "Status", "Evidence", "Note"], capability_rows),
         *workflow_sections,
+        *parity_sections,
+        "## Continuity and workspace views",
+        f"Resume capsule: `{resume_path if resume_path.is_file() else 'not generated'}`  \n"
+        f"Research portal: `{portal_path if portal_path.is_file() else 'not generated'}`",
         "## Search log",
         table(
             ["ID", "Database", "Query", "Selected", "Rejected", "Snapshot"],
@@ -335,7 +357,11 @@ def main() -> int:
             path = scores_path.parent / name
             if path.is_file():
                 eval_input_paths.append(path)
-    workflow_input_paths = [path for path in (workflow_path, status_path) if path.is_file()]
+    workflow_input_paths = [
+        path
+        for path in (workflow_path, status_path, parity_path, resume_path, portal_path)
+        if path.is_file()
+    ]
     input_paths = [
         path for name, path in paths.items()
         if name not in ("manifest", "paper_cards")

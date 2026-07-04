@@ -8,6 +8,9 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 ├── workflow.json               # profile, domain and required/adaptive stages
 ├── STATUS.json                 # derived workflow coverage dashboard
 ├── STATUS.md                   # human-readable dashboard
+├── PORTAL.html                 # self-contained read-only visual workspace
+├── RESUME.md                   # portable new-thread continuity capsule
+├── PARITY.json                 # environment-aware public-feature audit
 ├── QUESTION.md
 ├── PLAN.md
 ├── GOVERNANCE.md
@@ -49,6 +52,8 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 - Never store credentials, access tokens, participant identifiers, protected health information, or restricted raw data in ledgers.
 - Pin external capabilities to immutable revisions. Popularity and registry inclusion are not trust signals.
 - Treat workflow status as navigation metadata, not a scientific-quality score. Configure irrelevant stages as `not-requested`; never mark them ready without recorded evidence.
+- Treat the portal, resume capsule, parity report, and packet as derived projections. Regenerate them after material ledger changes and never use them as substitutes for primary records.
+- Review `.science/PORTAL.html` and `.science/RESUME.md` before sharing; they may expose local paths, study metadata, claims, or governed-project context even though scripts and credentials are excluded.
 
 ## Evidence
 

@@ -1,0 +1,59 @@
+{
+  "schema": "codex-science.public-parity.v1",
+  "version": "1.0.0",
+  "retrieved_at": "2026-07-05",
+  "source": {
+    "title": "Claude Science, an AI workbench for scientists",
+    "publisher": "Anthropic",
+    "published_at": "2026-06-30",
+    "url": "https://www.anthropic.com/news/claude-science-ai-workbench"
+  },
+  "capabilities": [
+    {
+      "id": "single-research-environment",
+      "label": "Single research environment",
+      "public_description": "Coordinate literature, multi-step research, artifacts, refinement, and handoff in one environment."
+    },
+    {
+      "id": "auditable-artifact-history",
+      "label": "Auditable artifact history",
+      "public_description": "Preserve code, environment, inputs, descriptions, and history needed to inspect and reproduce outputs."
+    },
+    {
+      "id": "local-and-remote-access",
+      "label": "Local, SSH, and HPC access",
+      "public_description": "Work locally on macOS or Linux and connect to remote or HPC environments."
+    },
+    {
+      "id": "curated-scientific-ecosystem",
+      "label": "Curated scientific skills and connectors",
+      "public_description": "Use a broad preconfigured ecosystem spanning specialist scientific domains, databases, tools, and models."
+    },
+    {
+      "id": "specialist-and-reviewer-agents",
+      "label": "Specialist and reviewer agents",
+      "public_description": "Coordinate specialist agents and independently inspect citations, calculations, figures, and provenance."
+    },
+    {
+      "id": "native-rich-scientific-rendering",
+      "label": "Native rich scientific rendering",
+      "public_description": "Render structures, molecules, genome tracks, figures, and manuscripts interactively."
+    },
+    {
+      "id": "managed-elastic-compute",
+      "label": "Managed elastic compute",
+      "public_description": "Plan, authorize, submit, monitor, and recover local, cluster, GPU, or on-demand compute."
+    },
+    {
+      "id": "session-forking-and-memory",
+      "label": "Session forking and durable memory",
+      "public_description": "Resume work across sessions and compare branches without losing the original research state."
+    },
+    {
+      "id": "custom-tools-and-pipelines",
+      "label": "Custom tools and reusable pipelines",
+      "public_description": "Connect trusted lab tools and save validated workflows as reusable capabilities."
+    }
+  ],
+  "boundary": "This is a public-feature conformance map, not access to Claude Science source code, private prompts, licensed connectors, model weights, or proprietary UI."
+}

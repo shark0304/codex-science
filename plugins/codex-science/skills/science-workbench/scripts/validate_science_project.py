@@ -50,6 +50,7 @@ WORKFLOW_STAGES = {
     "handoff",
 }
 WORKFLOW_STATUSES = {"ready", "in-progress", "not-started", "not-requested"}
+PARITY_STATUSES = {"ready", "degraded", "unavailable"}
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -285,6 +286,11 @@ def main() -> int:
             if (science / "STATUS.json").is_file()
             else None
         )
+        parity = (
+            json.loads((science / "PARITY.json").read_text(encoding="utf-8"))
+            if (science / "PARITY.json").is_file()
+            else None
+        )
     except json.JSONDecodeError as exc:
         print(f"ERROR: invalid project JSON: {exc}", file=sys.stderr)
         return 2
@@ -344,6 +350,45 @@ def main() -> int:
                         errors.append(f"STATUS.json: stage {identifier} has invalid requirement")
                 if status_ids != WORKFLOW_STAGES:
                     errors.append("STATUS.json: stages must contain the complete workflow stage set")
+    if parity is not None:
+        if not isinstance(parity, dict) or parity.get("schema") != "codex-science.parity-report.v1":
+            errors.append("PARITY.json: unsupported or missing schema")
+        else:
+            capabilities_value = parity.get("capabilities")
+            if not isinstance(capabilities_value, list) or not capabilities_value:
+                errors.append("PARITY.json: capabilities must be a non-empty list")
+            else:
+                parity_ids = set()
+                for item in capabilities_value:
+                    if not isinstance(item, dict):
+                        errors.append("PARITY.json: capability must be an object")
+                        continue
+                    identifier = item.get("id")
+                    if not isinstance(identifier, str) or not identifier or identifier in parity_ids:
+                        errors.append(f"PARITY.json: invalid or duplicate capability {identifier!r}")
+                    else:
+                        parity_ids.add(identifier)
+                    if item.get("status") not in PARITY_STATUSES:
+                        errors.append(f"PARITY.json: capability {identifier} has invalid status")
+    resume_path = science / "RESUME.md"
+    if resume_path.is_file():
+        resume_text = resume_path.read_text(encoding="utf-8")
+        resume_study_id = study.get("id")
+        if (
+            not isinstance(resume_study_id, str)
+            or resume_study_id not in resume_text
+            or "## New-thread prompt" not in resume_text
+        ):
+            errors.append("RESUME.md: missing study identity or new-thread prompt")
+    portal_path = science / "PORTAL.html"
+    if portal_path.is_file():
+        portal_text = portal_path.read_text(encoding="utf-8")
+        if not portal_text.lstrip().lower().startswith("<!doctype html>"):
+            errors.append("PORTAL.html: missing HTML doctype")
+        if "Content-Security-Policy" not in portal_text:
+            errors.append("PORTAL.html: missing content security policy")
+        if re.search(r"<script\b", portal_text, flags=re.IGNORECASE):
+            errors.append("PORTAL.html: executable scripts are not allowed")
 
     sources = read_jsonl(science / "evidence/sources.jsonl", errors)
     claims = read_jsonl(science / "evidence/claims.jsonl", errors)

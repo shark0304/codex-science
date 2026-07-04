@@ -1,7 +1,7 @@
 {
   "name": "codex-science",
-  "version": "0.5.0",
-  "description": "A one-stop auditable research concierge from question to reproducible handoff",
+  "version": "0.6.0",
+  "description": "A visual, auditable research workbench from question to reproducible handoff",
   "author": {
     "name": "shark0304"
   },
@@ -20,13 +20,16 @@
     "pubmed",
     "openalex",
     "research-concierge",
-    "workflow-dashboard"
+    "workflow-dashboard",
+    "research-portal",
+    "cross-session-resume",
+    "capability-audit"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Codex Science",
-    "shortDescription": "One-stop research from goal to auditable handoff",
-    "longDescription": "Act as a research concierge that coordinates question framing, scientific metadata, literature, datasets, preregistered experiments, compute, reproducible artifacts, manuscripts, evaluations, review, bounded improvement loops, and final handoff through one guided workflow.",
+    "shortDescription": "Visual research workspace with auditable handoff",
+    "longDescription": "Act as a research concierge with a visual local workspace that coordinates question framing, scientific metadata, literature, datasets, preregistered experiments, compute, reproducible artifacts, manuscripts, evaluations, review, bounded improvement loops, cross-thread continuity, capability auditing, and final handoff.",
     "developerName": "shark0304",
     "category": "Productivity",
     "capabilities": [
@@ -35,7 +38,7 @@
     ],
     "defaultPrompt": [
       "Act as my one-stop research concierge: take my goal and coordinate the full auditable workflow.",
-      "Inspect my existing research project, show the real status, and continue the highest-value next step.",
+      "Inspect my existing research project, refresh the visual portal, show the real status, and continue the highest-value next step.",
       "Turn my evidence, data, and analysis into a reproducible publication-ready handoff."
     ]
   }

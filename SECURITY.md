@@ -11,3 +11,5 @@ Third-party capability scan reports are triage aids, not guarantees. Review the 
 Scientific connectors accept provider credentials only through documented environment variables. Never commit those variables, copied request headers, unsanitized URLs, or private provider responses. Connector snapshots are metadata inputs and must be reviewed for data-use or redistribution restrictions before publication.
 
 The unified doctor reports only whether documented credential variables are configured; it never records their values. Tool discovery and credential presence do not establish authorization, quota, compatibility, or permission to transfer research data.
+
+The generated `.science/PORTAL.html` is self-contained and read-only: it embeds no scripts, external fonts, trackers, or network resources, and all ledger content is HTML-escaped. It can still contain sensitive study titles, claims, paths, provider status, or project metadata. Review it and `.science/RESUME.md` before publishing, emailing, or serving them outside the governed project boundary.
