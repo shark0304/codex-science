@@ -1,7 +1,7 @@
 {
   "name": "codex-science",
-  "version": "0.3.0",
-  "description": "An auditable scientific workbench with bounded research improvement loops for Codex",
+  "version": "0.4.0",
+  "description": "An auditable scientific workbench with live metadata connectors, evals, and bounded improvement loops",
   "author": {
     "name": "shark0304"
   },
@@ -15,13 +15,16 @@
     "literature",
     "experiments",
     "evals",
-    "loop-engine"
+    "loop-engine",
+    "crossref",
+    "pubmed",
+    "openalex"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Codex Science",
     "shortDescription": "Auditable research from question to artifact",
-    "longDescription": "Coordinate evidence-led literature research, dataset lineage, preregistered experiments, approval-aware compute, reproducible artifacts, independent review, and bounded plan-trace-eval-repair loops with pinned external capabilities.",
+    "longDescription": "Coordinate evidence-led literature research with Crossref, PubMed and OpenAlex metadata; dataset lineage; preregistered experiments; reproducible artifacts; same-task agent evals; independent review; and bounded improvement loops.",
     "developerName": "shark0304",
     "category": "Productivity",
     "capabilities": [
@@ -30,8 +33,8 @@
     ],
     "defaultPrompt": [
       "Turn my research question into an auditable end-to-end study.",
-      "Build a source-to-claim literature synthesis with disconfirming evidence.",
-      "Run a bounded improvement loop until every declared research gate passes."
+      "Search scientific metadata and build a source-to-claim synthesis.",
+      "Run and compare a reproducible scientific-agent benchmark."
     ]
   }
 }

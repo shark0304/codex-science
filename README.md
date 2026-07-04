@@ -7,7 +7,7 @@ It is an independent implementation inspired by publicly documented scientific-a
 ## What it provides
 
 - A coordinating `science-workbench` skill.
-- Specialist literature, experiment, artifact, and reviewer skills.
+- Specialist literature, connector, experiment, artifact, loop, eval, and reviewer skills.
 - Source, search, paper-card, claim, dataset, experiment, compute, artifact, review, and fork records.
 - Approval-aware plans for local, SSH, SLURM, Modal, or other compute backends.
 - Environment and tool capability snapshots that intentionally omit credentials.
@@ -16,6 +16,8 @@ It is an independent implementation inspired by publicly documented scientific-a
 - A bounded plan → trace → eval → decision loop with explicit success, budget and no-progress gates.
 - A capability registry that pins third-party skills, plugins, MCP tools and services to reviewed revisions.
 - Static capability inventory and risk scanning before external code becomes eligible for a loop plan.
+- Read-only Crossref and PubMed metadata retrieval plus keyed OpenAlex search, with secret-free snapshots and explicit source import.
+- A versioned eight-task transparent benchmark for same-task scientific-agent regression and exploratory comparison.
 - Timestamped Markdown research packets suitable for supervisors, collaborators, reviewers, and future sessions.
 
 ## Install
@@ -85,6 +87,39 @@ Each iteration is recorded as plan, trace, evaluation and decision events. The e
 
 Third-party repositories are adapters, not vendored dependencies. Check out an immutable revision, scan it with `scan_capability.py`, review its scripts and license, then register that exact revision with `capability_registry.py`. Stars and inclusion in an awesome list are discovery signals—not a security or scientific-quality verdict.
 
+## Scientific metadata connectors
+
+The connector skill queries official metadata APIs and saves the provider response, normalized records, response hashes and sanitized request URLs. Search results remain metadata-only until explicitly screened and imported:
+
+```bash
+CONNECTORS=/path/to/codex-science/plugins/codex-science/skills/scientific-connectors/scripts
+
+python3 "$CONNECTORS/literature_connectors.py" crossref \
+  --query "reproducible scientific workflows" --limit 10 \
+  --output .science/evidence/snapshots/crossref.json
+python3 "$CONNECTORS/literature_connectors.py" import \
+  --root . --file .science/evidence/snapshots/crossref.json \
+  --prefix CR --search-id Q-CR-001 --reason "Screen primary evidence" --select 1
+```
+
+Crossref and PubMed support anonymous bounded queries. OpenAlex currently requires `OPENALEX_API_KEY`; the key and optional Crossref/NCBI contact or API-key environment variables are redacted from snapshots.
+
+## Same-task scientific-agent evaluation
+
+The `science-evals` skill ships a transparent synthetic process benchmark and deterministic runner:
+
+```bash
+EVALS=/path/to/codex-science/plugins/codex-science/skills/science-evals/scripts
+
+python3 "$EVALS/science_eval.py" init \
+  --run-dir .science/evals/codex-run --system codex-science \
+  --model "<exact model>" --repetitions 3
+python3 "$EVALS/science_eval.py" grade --run-dir .science/evals/codex-run
+python3 "$EVALS/science_eval.py" validate --run-dir .science/evals/codex-run
+```
+
+Use identical tasks, tools, data, time limits and attempt counts for a comparison system. The bundled suite is appropriate for regression and exploratory comparison; it is transparent, synthetic and does not prove overall scientific intelligence or complete Claude Science parity.
+
 ## Public capability alignment
 
 The plugin aligns with the public Claude Science workflow at the methods layer: coordinating and specialist workflows, literature synthesis, auditable artifacts, local research state, compute planning, persistent memory, study forks, reviewer passes, and optional scientific tools.
@@ -93,6 +128,7 @@ Some product capabilities necessarily remain environment-dependent:
 
 - Scientific databases and connectors require separate installation, authentication, licensing, and institutional authorization.
 - External skills and plugins require independent license, security, data-boundary and compatibility review before approval in a loop.
+- OpenAlex retrieval requires a user-owned key and consumes the provider's current credit allowance; Codex Science does not supply or persist that credential.
 - SSH, SLURM, Modal and GPU execution require those tools and an approved target.
 - Native 3D molecular, protein, genome-track, or other rich rendering requires an installed renderer; Codex Science records the lineage and requires a static fallback.
 - Independent reviewer-agent status requires a fresh context or explicitly authorized reviewer agent.
@@ -125,6 +161,9 @@ python3 scripts/validate_release.py
 - [Codex plugin documentation](https://developers.openai.com/codex/plugins/build)
 - [OpenAI agent improvement loop](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop)
 - [OpenAI iterative repair loops](https://developers.openai.com/cookbook/examples/codex/build_iterative_repair_loops_with_codex)
+- [Crossref REST API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/)
+- [NCBI E-utilities](https://www.ncbi.nlm.nih.gov/books/NBK25501/)
+- [OpenAlex developer documentation](https://developers.openalex.org/)
 
 ## License
 

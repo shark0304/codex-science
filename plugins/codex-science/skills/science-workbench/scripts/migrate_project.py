@@ -44,6 +44,7 @@ def main() -> int:
     shutil.copy2(study_path, backup)
     for relative in (
         "evidence/paper-cards",
+        "evidence/snapshots",
         "datasets",
         "compute",
         "artifacts",

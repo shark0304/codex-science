@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Evals"
+  short_description: "Comparable scientific-agent benchmark runs"
+  default_prompt: "Use $science-evals to run and compare a reproducible scientific-agent benchmark."

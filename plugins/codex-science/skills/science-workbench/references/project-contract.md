@@ -14,6 +14,7 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 │   ├── sources.jsonl
 │   ├── claims.jsonl
 │   ├── searches.jsonl
+│   ├── snapshots/               # optional connector result snapshots
 │   └── paper-cards/
 ├── datasets/registry.jsonl
 ├── experiments/registry.jsonl
@@ -31,6 +32,7 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 │   ├── decisions.jsonl
 │   └── NEXT.md
 ├── runs/
+├── evals/                       # optional comparable benchmark runs
 └── forks.jsonl
 ```
 
@@ -47,6 +49,8 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 ## Evidence
 
 Source records require `id`, `title`, `location`, and `retrieved_at`. Claim records require `id`, `text`, `status`, `sources`, `experiments`, and `created_at`; evidence-backed claims must reference a source or experiment event. Search records preserve query, source/database, filters, reason, selection/rejection and next search. Paper cards bind structured extraction to one source ID.
+
+Connector snapshots preserve sanitized request metadata, response hashes, provider payloads and normalized discovery records. They remain metadata-only until a researcher screens the source. Never infer peer review, correction status, full-text access or claim support from database inclusion.
 
 ## Datasets
 

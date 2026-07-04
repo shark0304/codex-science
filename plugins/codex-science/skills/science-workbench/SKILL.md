@@ -1,6 +1,6 @@
 ---
 name: science-workbench
-description: Coordinate auditable, reproducible scientific research from question framing through literature, datasets, experiments, local or remote compute, scientific artifacts, bounded improvement loops, independent review, forking, and final handoff. Use for end-to-end research projects, vague scientific questions, multi-stage analyses, long-running studies, research workspaces, repeated eval-and-repair work, or requests for a Claude Science-style scientific workbench in Codex.
+description: Coordinate auditable, reproducible scientific research from question framing through live metadata connectors, literature, datasets, experiments, compute, artifacts, same-task evaluation, bounded improvement loops, independent review, forking, and final handoff. Use for end-to-end research projects, vague scientific questions, multi-stage analyses, long-running studies, research workspaces, scientific-agent comparisons, repeated eval-and-repair work, or requests for a Claude Science-style scientific workbench in Codex.
 ---
 
 # Science Workbench
@@ -28,12 +28,13 @@ Do not overwrite an existing `.science/` directory. Run `migrate_project.py` whe
 ## Coordinate specialist workflows
 
 1. **Frame**: define scope, unit of analysis, decision, confirmatory hypotheses, exploratory questions, falsifiers, success thresholds, constraints, and required expert/ethics review.
-2. **Evidence**: use `$literature-studio` for searches, source intake, paper cards, claim ledgers, contradictions, and gap analysis.
+2. **Evidence**: use `$literature-studio` for searches, source intake, paper cards, claim ledgers, contradictions, and gap analysis. Use `$scientific-connectors` for bounded Crossref, PubMed, or OpenAlex metadata retrieval when those providers fit the question.
 3. **Data and experiments**: use `$experiment-studio` for dataset lineage, preregistration, environment identity, controlled compute, immutable results, sensitivity analysis, and forks.
 4. **Artifacts**: use `$artifact-studio` for code-backed figures, tables, notebooks, rich scientific views, reports, manuscripts, and visual QA.
 5. **Closed-loop improvement**: use `$loop-engine` when work must repeat until explicit evidence, reproducibility, quality, safety, or performance gates pass. Register only pinned and reviewed external capabilities.
-6. **Review**: use `$science-reviewer` in an independent context when available and authorized. Otherwise perform a labeled adversarial pass and disclose that independence is degraded.
-7. **Handoff**: run structural/integrity validation, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
+6. **Evaluation**: use `$science-evals` for regression measurement or same-task comparison claims. Keep transparent structural scores separate from blinded human review.
+7. **Review**: use `$science-reviewer` in an independent context when available and authorized. Otherwise perform a labeled adversarial pass and disclose that independence is degraded.
+8. **Handoff**: run structural/integrity validation, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
 
 Do not claim a specialist pass occurred unless it actually occurred. If a required skill, renderer, connector, database, compute backend, or reviewer context is unavailable, record `degraded` or `unavailable` and continue only within the supported boundary.
 

@@ -190,6 +190,11 @@ def validate_repository(errors: list[str]) -> None:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
+        if path.suffix.lower() == ".json":
+            try:
+                json.loads(text)
+            except json.JSONDecodeError as exc:
+                errors.append(f"{path.relative_to(ROOT)}: invalid JSON: {exc}")
         unfinished = ("TO" + "DO", "FIX" + "ME")
         if any(re.search(rf"\b{marker}\b", text) for marker in unfinished):
             errors.append(f"{path.relative_to(ROOT)}: unresolved work marker")

@@ -184,6 +184,47 @@ def main() -> int:
     for relative in DIRECTORIES:
         if not (science / relative).is_dir():
             errors.append(f"missing required directory: {science / relative}")
+    eval_validation = "not-present"
+    eval_root = science / "evals"
+    if eval_root.is_dir():
+        eval_runs = sorted(path.parent for path in eval_root.glob("*/run.json"))
+        if eval_runs:
+            eval_validator = (
+                pathlib.Path(__file__).resolve().parents[2]
+                / "science-evals/scripts/science_eval.py"
+            )
+            if not eval_validator.is_file():
+                errors.append(f"science eval validator is unavailable: {eval_validator}")
+                eval_validation = "failed"
+            else:
+                failed_evals = []
+                for eval_run in eval_runs:
+                    try:
+                        process = subprocess.run(
+                            [
+                                sys.executable,
+                                str(eval_validator),
+                                "validate",
+                                "--run-dir",
+                                str(eval_run),
+                            ],
+                            check=False,
+                            text=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            timeout=60,
+                        )
+                    except subprocess.TimeoutExpired:
+                        failed_evals.append(f"{eval_run}: validation timeout")
+                    else:
+                        if process.returncode != 0:
+                            failed_evals.append(f"{eval_run}:\n{process.stdout.rstrip()}")
+                if failed_evals:
+                    eval_validation = "failed"
+                    errors.append("science eval validation failed:\n" + "\n".join(failed_evals))
+                else:
+                    eval_validation = f"passed({len(eval_runs)})"
+
     loop_validation = "not-present"
     if (science / "loop/contract.json").is_file():
         loop_validator = (
@@ -267,6 +308,10 @@ def main() -> int:
         for key in ("selected_sources", "rejected_sources"):
             if not isinstance(search.get(key), list):
                 errors.append(f"{label}: {key} must be a list")
+        if search.get("snapshot") is not None:
+            validate_file_records(
+                [search.get("snapshot")], f"{label} snapshot", errors, verify_files
+            )
 
     card_ids: set[str] = set()
     for path in sorted((science / "evidence/paper-cards").glob("*.json")):
@@ -413,7 +458,7 @@ def main() -> int:
         f"{len(dataset_ids)} datasets, {len(experiment_ids)} experiment events, "
         f"{len(compute_ids)} compute events, {len(artifacts)} artifacts; "
         f"file_hashes={'skipped' if args.skip_file_hashes else 'verified'}, "
-        f"loop={loop_validation})"
+        f"loop={loop_validation}, evals={eval_validation})"
     )
     return 0
 

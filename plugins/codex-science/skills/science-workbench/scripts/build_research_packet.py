@@ -74,6 +74,8 @@ def main() -> int:
         "review": science / "reviews/REVIEW.md",
         "forks": science / "forks.jsonl",
     }
+    connector_snapshot_paths = sorted((science / "evidence/snapshots").glob("*.json"))
+    eval_score_paths = sorted((science / "evals").glob("*/scores.json"))
     loop_paths: dict[str, pathlib.Path] = {}
     if (science / "loop/contract.json").is_file():
         loop_paths = {
@@ -113,6 +115,12 @@ def main() -> int:
         compute = read_jsonl(paths["compute"])
         artifacts = read_jsonl(paths["manifest"])
         forks = read_jsonl(paths["forks"])
+        for search in searches:
+            snapshot = search.get("snapshot")
+            if isinstance(snapshot, dict) and isinstance(snapshot.get("path"), str):
+                path = pathlib.Path(snapshot["path"])
+                if path.is_file() and path not in connector_snapshot_paths:
+                    connector_snapshot_paths.append(path)
         loop_contract = (
             json.loads(loop_paths["loop_contract"].read_text(encoding="utf-8"))
             if loop_paths
@@ -127,6 +135,7 @@ def main() -> int:
         loop_traces = read_jsonl(loop_paths["loop_traces"]) if loop_paths else []
         loop_evaluations = read_jsonl(loop_paths["loop_evaluations"]) if loop_paths else []
         loop_decisions = read_jsonl(loop_paths["loop_decisions"]) if loop_paths else []
+        eval_summaries = [json.loads(path.read_text(encoding="utf-8")) for path in eval_score_paths]
     except (json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -199,6 +208,27 @@ def main() -> int:
                 ],
             ),
         ]
+    eval_sections = []
+    if eval_summaries:
+        eval_sections = [
+            "## Scientific-agent evaluations",
+            table(
+                ["System", "Model", "Suite", "Structural mean", "Pass rate", "Coverage"],
+                [
+                    [
+                        item.get("system"),
+                        item.get("model"),
+                        item.get("suite_id"),
+                        item.get("structural_mean"),
+                        item.get("strict_pass_rate"),
+                        f"{item.get('recorded_attempts')}/{item.get('expected_attempts')}",
+                    ]
+                    for item in eval_summaries
+                    if isinstance(item, dict)
+                ],
+            ),
+            "These transparent benchmark summaries measure research-process discipline; they do not establish overall scientific intelligence or product parity.",
+        ]
     sections = [
         f"# {study.get('title', 'Research packet')}",
         f"Generated: `{generated_at}`  \nStudy status: `{study.get('status', 'unknown')}`  \nStudy ID: `{study.get('id', 'unknown')}`",
@@ -212,8 +242,8 @@ def main() -> int:
         table(["Capability", "Status", "Evidence", "Note"], capability_rows),
         "## Search log",
         table(
-            ["ID", "Database", "Query", "Selected", "Rejected"],
-            [[item.get("id"), item.get("database"), item.get("query"), item.get("selected_sources"), item.get("rejected_sources")] for item in searches],
+            ["ID", "Database", "Query", "Selected", "Rejected", "Snapshot"],
+            [[item.get("id"), item.get("database"), item.get("query"), item.get("selected_sources"), item.get("rejected_sources"), item.get("snapshot")] for item in searches],
         ),
         "## Evidence sources",
         table(
@@ -256,6 +286,7 @@ def main() -> int:
             [[item.get("id"), item.get("source_study_id"), item.get("destination_root"), item.get("reason")] for item in forks],
         ),
         *loop_sections,
+        *eval_sections,
         "## Independent review",
         paths["review"].read_text(encoding="utf-8"),
         "## Lab notes",
@@ -276,10 +307,16 @@ def main() -> int:
                 path = pathlib.Path(scan["path"])
                 if path.is_file():
                     loop_scan_paths.append(path)
+    eval_input_paths = []
+    for scores_path in eval_score_paths:
+        for name in ("run.json", "suite.json", "results.jsonl", "scores.json", "report.md"):
+            path = scores_path.parent / name
+            if path.is_file():
+                eval_input_paths.append(path)
     input_paths = [
         path for name, path in paths.items()
         if name not in ("manifest", "paper_cards")
-    ] + paper_card_paths + list(loop_paths.values()) + loop_scan_paths
+    ] + paper_card_paths + connector_snapshot_paths + list(loop_paths.values()) + loop_scan_paths + eval_input_paths
     record = {
         "id": "A-" + uuid.uuid4().hex[:12],
         "created_at": generated_at,

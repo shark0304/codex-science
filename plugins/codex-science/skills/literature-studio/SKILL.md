@@ -16,7 +16,7 @@ Produce a traceable source-to-claim synthesis. Never fabricate citations or let 
 ## Run the workflow
 
 1. Define the review question, scope, source types, date/language limits, inclusion/exclusion criteria, and stopping rule before broad searching.
-2. Log every material search with `../science-workbench/scripts/literature_ledger.py search`.
+2. Log every material search with `../science-workbench/scripts/literature_ledger.py search`. When Crossref, PubMed, or OpenAlex is appropriate, use `$scientific-connectors` to preserve a sanitized metadata snapshot and import only explicitly selected records.
 3. Prefer primary papers, official datasets, registrations, protocols, standards, and source repositories. Use reviews for orientation and citation chaining.
 4. Add sources with `science_ledger.py`; preserve DOI/accession/version, retrieval date, peer-review status, correction/retraction status, and local checksum when available.
 5. Create paper cards for core sources. Extract design, population/system, method, sample size, outcomes, effect and uncertainty, limitations, conflicts, data/code availability, and the exact claims supported.

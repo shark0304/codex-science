@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Connectors"
+  short_description: "Auditable scientific metadata connectors"
+  default_prompt: "Use $scientific-connectors to search scientific metadata and import reviewed records into my study."

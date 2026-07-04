@@ -36,6 +36,7 @@ def main() -> int:
 
     for relative in (
         "evidence/paper-cards",
+        "evidence/snapshots",
         "datasets",
         "experiments",
         "compute",

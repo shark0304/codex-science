@@ -7,3 +7,5 @@ For a sensitive vulnerability, use GitHub private vulnerability reporting for th
 Codex Science intentionally does not execute or approve remote compute, publish manuscripts, transfer data, or authorize clinical/wet-lab actions. Those boundaries must remain explicit in contributions.
 
 Third-party capability scan reports are triage aids, not guarantees. Review the complete pinned checkout, dependency chain, license, network behavior, credential access, and data destination before marking a capability approved. Runtime authorization in Codex remains separate from registry trust.
+
+Scientific connectors accept provider credentials only through documented environment variables. Never commit those variables, copied request headers, unsanitized URLs, or private provider responses. Connector snapshots are metadata inputs and must be reviewed for data-use or redistribution restrictions before publication.
