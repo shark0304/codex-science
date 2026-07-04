@@ -10,5 +10,6 @@ Contributions should improve scientific traceability, reproducibility, safety, o
 6. Never commit real credentials, restricted research data, participant information, copyrighted paper collections, or generated claims presented as evidence.
 7. Do not vendor third-party capabilities without explicit license compatibility. Pin test fixtures and adapters to immutable revisions, preserve scan findings, and keep runtime authorization separate from registry trust.
 8. Mock network providers in CI. Keep live API tests bounded and manual, never place credentials in fixtures, and update provider behavior only from official documentation.
+9. Preserve the one-stop service contract: unified commands must remain non-shell, secret-free, profile-aware, and unable to claim milestone completion while required workflow or audit gates remain open.
 
 Pull requests must explain the scientific-integrity boundary: what the change verifies and what it cannot verify.

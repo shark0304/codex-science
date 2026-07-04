@@ -5,6 +5,9 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 ```text
 .science/
 ├── study.json
+├── workflow.json               # profile, domain and required/adaptive stages
+├── STATUS.json                 # derived workflow coverage dashboard
+├── STATUS.md                   # human-readable dashboard
 ├── QUESTION.md
 ├── PLAN.md
 ├── GOVERNANCE.md
@@ -45,6 +48,7 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 - Hash local inputs, datasets, results and artifacts with SHA-256.
 - Never store credentials, access tokens, participant identifiers, protected health information, or restricted raw data in ledgers.
 - Pin external capabilities to immutable revisions. Popularity and registry inclusion are not trust signals.
+- Treat workflow status as navigation metadata, not a scientific-quality score. Configure irrelevant stages as `not-requested`; never mark them ready without recorded evidence.
 
 ## Evidence
 

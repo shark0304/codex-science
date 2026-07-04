@@ -1,0 +1,95 @@
+{
+  "schema": "codex-science.service-catalog.v1",
+  "version": "1.0.0",
+  "services": [
+    {
+      "id": "framing",
+      "label": "Question framing and study design",
+      "stage": "framing",
+      "skill": "science-workbench",
+      "availability": "built-in",
+      "commands": ["init", "configure", "status", "next"]
+    },
+    {
+      "id": "governance",
+      "label": "Governance, ethics, privacy, and approvals",
+      "stage": "governance",
+      "skill": "science-workbench",
+      "availability": "built-in",
+      "commands": ["doctor", "status", "validate"]
+    },
+    {
+      "id": "literature",
+      "label": "Literature discovery and source-to-claim synthesis",
+      "stage": "evidence",
+      "skill": "literature-studio",
+      "availability": "built-in",
+      "commands": ["search", "import-sources"]
+    },
+    {
+      "id": "data",
+      "label": "Dataset identity, access, and lineage",
+      "stage": "data",
+      "skill": "experiment-studio",
+      "availability": "built-in",
+      "commands": ["status", "validate"]
+    },
+    {
+      "id": "experiments",
+      "label": "Preregistration, experiments, and sensitivity checks",
+      "stage": "protocol",
+      "skill": "experiment-studio",
+      "availability": "built-in",
+      "commands": ["status", "validate"]
+    },
+    {
+      "id": "compute",
+      "label": "Local, SSH, SLURM, GPU, and on-demand compute planning",
+      "stage": "compute",
+      "skill": "experiment-studio",
+      "availability": "environment-dependent",
+      "commands": ["doctor", "status"]
+    },
+    {
+      "id": "artifacts",
+      "label": "Figures, tables, notebooks, reports, and manuscripts",
+      "stage": "artifacts",
+      "skill": "artifact-studio",
+      "availability": "renderer-dependent",
+      "commands": ["status", "packet"]
+    },
+    {
+      "id": "review",
+      "label": "Integrity audit and adversarial scientific review",
+      "stage": "review",
+      "skill": "science-reviewer",
+      "availability": "independence-dependent",
+      "commands": ["audit", "handoff"]
+    },
+    {
+      "id": "improvement-loop",
+      "label": "Bounded plan, trace, evaluation, and repair loops",
+      "stage": "iteration",
+      "skill": "loop-engine",
+      "availability": "built-in",
+      "commands": ["loop"]
+    },
+    {
+      "id": "agent-evaluation",
+      "label": "Same-task scientific-agent regression and comparison",
+      "stage": "evaluation",
+      "skill": "science-evals",
+      "availability": "built-in",
+      "commands": ["eval"]
+    },
+    {
+      "id": "handoff",
+      "label": "Validation, research packets, forks, and collaboration",
+      "stage": "handoff",
+      "skill": "science-workbench",
+      "availability": "built-in",
+      "commands": ["validate", "packet", "handoff", "fork"]
+    }
+  ],
+  "boundary": "The catalog describes available workflows, not scientific correctness, expert approval, connector authorization, compute entitlement, or renderer availability."
+}

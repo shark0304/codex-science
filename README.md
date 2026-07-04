@@ -7,6 +7,7 @@ It is an independent implementation inspired by publicly documented scientific-a
 ## What it provides
 
 - A coordinating `science-workbench` skill.
+- A single `science.py` service entry point for guided intake, environment checks, workflow status, next actions, connectors, evals, loops, audits, and handoff.
 - Specialist literature, connector, experiment, artifact, loop, eval, and reviewer skills.
 - Source, search, paper-card, claim, dataset, experiment, compute, artifact, review, and fork records.
 - Approval-aware plans for local, SSH, SLURM, Modal, or other compute backends.
@@ -19,6 +20,7 @@ It is an independent implementation inspired by publicly documented scientific-a
 - Read-only Crossref and PubMed metadata retrieval plus keyed OpenAlex search, with secret-free snapshots and explicit source import.
 - A versioned eight-task transparent benchmark for same-task scientific-agent regression and exploratory comparison.
 - Timestamped Markdown research packets suitable for supervisors, collaborators, reviewers, and future sessions.
+- A profile-aware workflow dashboard that distinguishes recorded coverage from scientific quality and refuses premature completion claims.
 
 ## Install
 
@@ -30,10 +32,22 @@ codex plugin add codex-science@codex-science
 Restart Codex, start a new thread, then ask:
 
 ```text
-Use Codex Science to turn my research question into an auditable end-to-end study.
+Use Codex Science as my one-stop research concierge. My goal is: <your goal>.
+Inspect what I already have, do the work you can, and keep me oriented from question to reproducible handoff.
 ```
 
 You can also open `/plugins`, select the **Codex Science** marketplace, and install the plugin from the UI. Codex plugin packaging and marketplace behavior follow the [official plugin documentation](https://developers.openai.com/codex/plugins/build).
+
+## One-stop research experience
+
+You do not need to choose scripts or specialist skills. State the outcome you need—for example a literature review, experiment design, supplied-data analysis, reproduction, thesis chapter, grant, figure, presentation, or reviewer-ready packet. The coordinator inspects the workspace, asks only questions that materially change the design or authority boundary, selects a Quick/Standard/Deep profile, invokes the relevant specialist workflows, and reports:
+
+- the current outcome;
+- evidence or artifacts actually created;
+- unresolved uncertainty;
+- the next falsifiable action.
+
+It maintains `.science/STATUS.md` as a compact control panel. Required stages can be marked `not-requested` when they genuinely do not apply; they are never marked passed merely to improve a percentage.
 
 ## Workflow
 
@@ -54,20 +68,20 @@ For Standard and Deep studies, the plugin creates a local `.science/` directory 
 
 ## Deterministic commands
 
-The coordinator normally runs these for you. They can also be invoked directly:
+The coordinator normally uses one entry point for you. It can also be invoked directly:
 
 ```bash
-SCRIPTS=/path/to/codex-science/plugins/codex-science/skills/science-workbench/scripts
+SCIENCE=/path/to/codex-science/plugins/codex-science/skills/science-workbench/scripts/science.py
 
-python3 "$SCRIPTS/init_science_project.py" \
-  --root . --title "My study" --question "What would falsify hypothesis H?"
-python3 "$SCRIPTS/capability_report.py" --root .
-python3 "$SCRIPTS/validate_science_project.py" --root .
-python3 "$SCRIPTS/audit_project.py" --root .
-python3 "$SCRIPTS/build_research_packet.py" --root .
+python3 "$SCIENCE" doctor --root .
+python3 "$SCIENCE" init --root . --title "My study" \
+  --question "What would falsify hypothesis H?" --profile standard --domain general
+python3 "$SCIENCE" status --root .
+python3 "$SCIENCE" next --root .
+python3 "$SCIENCE" handoff --root .
 ```
 
-Every command provides `--help`. None of the included scripts submit compute jobs, publish manuscripts, transfer datasets, or grant approvals. External actions remain subject to Codex permissions and explicit user authorization.
+Run `python3 "$SCIENCE" services` for the complete local catalog. Every command provides `--help`. None of the included scripts submit compute jobs, publish manuscripts, transfer datasets, or grant approvals. External actions remain subject to Codex permissions and explicit user authorization. A draft packet may be generated with known gaps, but `handoff` returns a blocking status rather than claiming completion while required stages or audit findings remain unresolved.
 
 ## Loop Engine
 

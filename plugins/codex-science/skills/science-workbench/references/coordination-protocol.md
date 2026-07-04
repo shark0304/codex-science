@@ -16,6 +16,8 @@
 
 Use `ready`, `degraded`, `unavailable`, `not-requested`, and `not-verified` for capabilities. Use `observed`, `derived`, `hypothesis`, `conflicted`, and `unsupported` for claims. Never collapse these vocabularies into a generic success label.
 
+Use `required`, `adaptive`, and `not-requested` for workflow relevance. Use `not-started`, `in-progress`, `ready`, and `not-requested` for recorded workflow coverage. A `ready` workflow stage means its minimum local evidence is present; it is not expert approval or a scientific verdict.
+
 ## Long-running work
 
 Treat `LAB_NOTES.md` as portable memory. Record current status, completed work, failed approaches and why, known limitations, key accuracy/evidence checkpoints, and the next falsifiable action. Use a fork for materially different protocols instead of silently changing the active study.

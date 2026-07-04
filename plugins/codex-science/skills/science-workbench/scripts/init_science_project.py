@@ -11,6 +11,49 @@ import re
 import sys
 
 
+PROFILE_STAGES = {
+    "quick": {
+        "framing": "required",
+        "governance": "adaptive",
+        "evidence": "required",
+        "data": "adaptive",
+        "protocol": "adaptive",
+        "compute": "adaptive",
+        "artifacts": "adaptive",
+        "review": "adaptive",
+        "iteration": "adaptive",
+        "evaluation": "adaptive",
+        "handoff": "required",
+    },
+    "standard": {
+        "framing": "required",
+        "governance": "required",
+        "evidence": "required",
+        "data": "required",
+        "protocol": "required",
+        "compute": "adaptive",
+        "artifacts": "required",
+        "review": "required",
+        "iteration": "adaptive",
+        "evaluation": "adaptive",
+        "handoff": "required",
+    },
+    "deep": {
+        "framing": "required",
+        "governance": "required",
+        "evidence": "required",
+        "data": "required",
+        "protocol": "required",
+        "compute": "adaptive",
+        "artifacts": "required",
+        "review": "required",
+        "iteration": "required",
+        "evaluation": "adaptive",
+        "handoff": "required",
+    },
+}
+
+
 def utc_now() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat()
 
@@ -25,6 +68,8 @@ def main() -> int:
     parser.add_argument("--root", type=pathlib.Path, required=True)
     parser.add_argument("--title", required=True)
     parser.add_argument("--question", required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILE_STAGES), default="standard")
+    parser.add_argument("--domain", default="general")
     args = parser.parse_args()
 
     root = args.root.expanduser().resolve()
@@ -57,6 +102,21 @@ def main() -> int:
     }
     (science / "study.json").write_text(
         json.dumps(study, indent=2) + "\n", encoding="utf-8"
+    )
+    workflow = {
+        "schema": "codex-science.workflow.v1",
+        "profile": args.profile,
+        "domain": args.domain.strip() or "general",
+        "created_at": created_at,
+        "updated_at": created_at,
+        "stages": PROFILE_STAGES[args.profile],
+        "boundary": (
+            "Workflow coverage is navigation metadata; stage readiness does not establish "
+            "scientific correctness, ethics approval, safety, novelty, or publication readiness."
+        ),
+    }
+    (science / "workflow.json").write_text(
+        json.dumps(workflow, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     (science / "QUESTION.md").write_text(
         f"# Research question\n\n{args.question}\n\n"

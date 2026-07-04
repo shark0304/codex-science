@@ -1,11 +1,19 @@
 ---
 name: science-workbench
-description: Coordinate auditable, reproducible scientific research from question framing through live metadata connectors, literature, datasets, experiments, compute, artifacts, same-task evaluation, bounded improvement loops, independent review, forking, and final handoff. Use for end-to-end research projects, vague scientific questions, multi-stage analyses, long-running studies, research workspaces, scientific-agent comparisons, repeated eval-and-repair work, or requests for a Claude Science-style scientific workbench in Codex.
+description: Provide a one-stop, auditable scientific research service from vague intent through question framing, literature, datasets, experiments, compute, artifacts, manuscripts, evaluation, review, iteration, and final handoff. Use for end-to-end research projects, literature reviews, data analyses, reproductions, paper or grant workflows, long-running studies, scientific-agent comparisons, repeated eval-and-repair work, or requests for a Claude Science-style research workbench in Codex.
 ---
 
 # Science Workbench
 
 Coordinate a research chain another scientist can inspect: question -> evidence -> data -> protocol -> run -> artifact -> review. Preserve uncertainty, negative results, and failed approaches; never fill evidence gaps with plausible prose.
+
+## Act as the research concierge
+
+Accept the scientist's goal in ordinary language and coordinate the required services. Do the work that is locally possible instead of returning a menu of scripts. Use `scripts/science.py` internally as the single control entry point; show commands only when the user asks or needs to reproduce the work.
+
+For a vague or multi-stage request, read [references/service-experience.md](references/service-experience.md). Determine the intended decision or deliverable, available evidence/data, and material constraints. Ask at most three short questions only when their answers would change the research design, safety boundary, data access, cost, or deliverable. Otherwise state conservative assumptions and begin.
+
+Keep the user oriented with four compact facts: current outcome, evidence or artifact created, unresolved uncertainty, and next falsifiable action. Never report a capability, specialist pass, connector search, reviewer check, or computation as completed unless it actually ran and left inspectable evidence.
 
 ## Select depth
 
@@ -18,9 +26,11 @@ Coordinate a research chain another scientist can inspect: question -> evidence 
 Inspect the workspace for `.science/`, existing protocols, data, notebooks, source managers, version control, compute constraints, and sensitive-data boundaries. For a new Standard/Deep study, run:
 
 ```bash
-python3 scripts/init_science_project.py --root <project-root> \
-  --title "<study title>" --question "<research question>"
-python3 scripts/capability_report.py --root <project-root>
+python3 scripts/science.py init --root <project-root> \
+  --title "<study title>" --question "<research question>" \
+  --profile <quick|standard|deep> --domain <domain>
+python3 scripts/science.py doctor --root <project-root> --save
+python3 scripts/science.py next --root <project-root>
 ```
 
 Do not overwrite an existing `.science/` directory. Run `migrate_project.py` when the validator reports an older schema.
@@ -34,7 +44,7 @@ Do not overwrite an existing `.science/` directory. Run `migrate_project.py` whe
 5. **Closed-loop improvement**: use `$loop-engine` when work must repeat until explicit evidence, reproducibility, quality, safety, or performance gates pass. Register only pinned and reviewed external capabilities.
 6. **Evaluation**: use `$science-evals` for regression measurement or same-task comparison claims. Keep transparent structural scores separate from blinded human review.
 7. **Review**: use `$science-reviewer` in an independent context when available and authorized. Otherwise perform a labeled adversarial pass and disclose that independence is degraded.
-8. **Handoff**: run structural/integrity validation, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
+8. **Handoff**: refresh the workflow dashboard, run structural/integrity validation and audit, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
 
 Do not claim a specialist pass occurred unless it actually occurred. If a required skill, renderer, connector, database, compute backend, or reviewer context is unavailable, record `degraded` or `unavailable` and continue only within the supported boundary.
 
@@ -56,10 +66,8 @@ Pause before remote/paid/shared compute, large downloads, external writes, publi
 ## Validate and deliver
 
 ```bash
-python3 scripts/validate_science_project.py --root <project-root>
-python3 ../loop-engine/scripts/validate_loop.py --root <project-root>  # when .science/loop exists
-python3 scripts/audit_project.py --root <project-root>
-python3 scripts/build_research_packet.py --root <project-root>
+python3 scripts/science.py status --root <project-root>
+python3 scripts/science.py handoff --root <project-root>
 ```
 
 Validation proves schema, references, and local file integrity—not scientific truth, novelty, safety, peer review, or external validity. End with conclusions by confidence, protocol deviations, negative/failed results, limitations, reviewer findings, exact reproduction commands, and work not performed.

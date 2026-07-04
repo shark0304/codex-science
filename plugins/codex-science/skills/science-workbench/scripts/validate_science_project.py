@@ -34,6 +34,22 @@ CLAIM_STATUSES = {"observed", "derived", "hypothesis", "conflicted", "unsupporte
 EXPERIMENT_RESULTS = {"passed", "failed", "error", "inconclusive"}
 COMPUTE_RESULTS = {"completed", "failed", "cancelled", "timeout", "unknown"}
 CAPABILITY_STATUSES = {"ready", "degraded", "unavailable", "not-requested", "not-verified"}
+WORKFLOW_PROFILES = {"quick", "standard", "deep"}
+WORKFLOW_REQUIREMENTS = {"required", "adaptive", "not-requested"}
+WORKFLOW_STAGES = {
+    "framing",
+    "governance",
+    "evidence",
+    "data",
+    "protocol",
+    "compute",
+    "artifacts",
+    "review",
+    "iteration",
+    "evaluation",
+    "handoff",
+}
+WORKFLOW_STATUSES = {"ready", "in-progress", "not-started", "not-requested"}
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -259,6 +275,16 @@ def main() -> int:
     try:
         study = json.loads((science / "study.json").read_text(encoding="utf-8"))
         capabilities = json.loads((science / "capabilities.json").read_text(encoding="utf-8"))
+        workflow = (
+            json.loads((science / "workflow.json").read_text(encoding="utf-8"))
+            if (science / "workflow.json").is_file()
+            else None
+        )
+        workflow_status = (
+            json.loads((science / "STATUS.json").read_text(encoding="utf-8"))
+            if (science / "STATUS.json").is_file()
+            else None
+        )
     except json.JSONDecodeError as exc:
         print(f"ERROR: invalid project JSON: {exc}", file=sys.stderr)
         return 2
@@ -278,6 +304,46 @@ def main() -> int:
         for name, value in capabilities.get("capabilities", {}).items():
             if not isinstance(value, dict) or value.get("status") not in CAPABILITY_STATUSES:
                 errors.append(f"capability {name}: invalid status")
+    if workflow is not None:
+        if not isinstance(workflow, dict) or workflow.get("schema") != "codex-science.workflow.v1":
+            errors.append("workflow.json: unsupported or missing schema")
+        else:
+            if workflow.get("profile") not in WORKFLOW_PROFILES:
+                errors.append("workflow.json: invalid profile")
+            require_text(workflow, "domain", "workflow.json", errors)
+            stages = workflow.get("stages")
+            if not isinstance(stages, dict) or set(stages) != WORKFLOW_STAGES:
+                errors.append("workflow.json: stages must contain the complete workflow stage set")
+            else:
+                for name, requirement in stages.items():
+                    if requirement not in WORKFLOW_REQUIREMENTS:
+                        errors.append(f"workflow.json: stage {name} has invalid requirement")
+    if workflow_status is not None:
+        if not isinstance(workflow_status, dict) or workflow_status.get("schema") != "codex-science.status.v1":
+            errors.append("STATUS.json: unsupported or missing schema")
+        else:
+            if workflow_status.get("study_id") != study.get("id"):
+                errors.append("STATUS.json: study_id does not match study.json")
+            status_stages = workflow_status.get("stages")
+            if not isinstance(status_stages, list):
+                errors.append("STATUS.json: stages must be a list")
+            else:
+                status_ids = set()
+                for item in status_stages:
+                    if not isinstance(item, dict):
+                        errors.append("STATUS.json: stage must be an object")
+                        continue
+                    identifier = item.get("id")
+                    if identifier not in WORKFLOW_STAGES or identifier in status_ids:
+                        errors.append(f"STATUS.json: invalid or duplicate stage {identifier!r}")
+                    else:
+                        status_ids.add(identifier)
+                    if item.get("status") not in WORKFLOW_STATUSES:
+                        errors.append(f"STATUS.json: stage {identifier} has invalid status")
+                    if item.get("requirement") not in WORKFLOW_REQUIREMENTS:
+                        errors.append(f"STATUS.json: stage {identifier} has invalid requirement")
+                if status_ids != WORKFLOW_STAGES:
+                    errors.append("STATUS.json: stages must contain the complete workflow stage set")
 
     sources = read_jsonl(science / "evidence/sources.jsonl", errors)
     claims = read_jsonl(science / "evidence/claims.jsonl", errors)

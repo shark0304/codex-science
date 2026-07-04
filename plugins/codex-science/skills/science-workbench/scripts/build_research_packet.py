@@ -76,6 +76,8 @@ def main() -> int:
     }
     connector_snapshot_paths = sorted((science / "evidence/snapshots").glob("*.json"))
     eval_score_paths = sorted((science / "evals").glob("*/scores.json"))
+    workflow_path = science / "workflow.json"
+    status_path = science / "STATUS.json"
     loop_paths: dict[str, pathlib.Path] = {}
     if (science / "loop/contract.json").is_file():
         loop_paths = {
@@ -136,6 +138,8 @@ def main() -> int:
         loop_evaluations = read_jsonl(loop_paths["loop_evaluations"]) if loop_paths else []
         loop_decisions = read_jsonl(loop_paths["loop_decisions"]) if loop_paths else []
         eval_summaries = [json.loads(path.read_text(encoding="utf-8")) for path in eval_score_paths]
+        workflow = json.loads(workflow_path.read_text(encoding="utf-8")) if workflow_path.is_file() else {}
+        workflow_status = json.loads(status_path.read_text(encoding="utf-8")) if status_path.is_file() else {}
     except (json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -229,6 +233,23 @@ def main() -> int:
             ),
             "These transparent benchmark summaries measure research-process discipline; they do not establish overall scientific intelligence or product parity.",
         ]
+    workflow_sections = []
+    if workflow_status:
+        workflow_sections = [
+            "## Research workflow dashboard",
+            f"Profile: `{workflow_status.get('profile', workflow.get('profile', ''))}`  \n"
+            f"Domain: `{workflow_status.get('domain', workflow.get('domain', ''))}`  \n"
+            f"Recorded required coverage: `{workflow_status.get('required_ready', 0)}/{workflow_status.get('required_total', 0)}`",
+            table(
+                ["Stage", "Requirement", "Status", "Recorded evidence", "Next action"],
+                [
+                    [item.get("label"), item.get("requirement"), item.get("status"), item.get("evidence"), item.get("next_action")]
+                    for item in workflow_status.get("stages", [])
+                    if isinstance(item, dict)
+                ],
+            ),
+            str(workflow_status.get("boundary", "")),
+        ]
     sections = [
         f"# {study.get('title', 'Research packet')}",
         f"Generated: `{generated_at}`  \nStudy status: `{study.get('status', 'unknown')}`  \nStudy ID: `{study.get('id', 'unknown')}`",
@@ -240,6 +261,7 @@ def main() -> int:
         paths["governance"].read_text(encoding="utf-8"),
         "## Capability inventory",
         table(["Capability", "Status", "Evidence", "Note"], capability_rows),
+        *workflow_sections,
         "## Search log",
         table(
             ["ID", "Database", "Query", "Selected", "Rejected", "Snapshot"],
@@ -313,10 +335,11 @@ def main() -> int:
             path = scores_path.parent / name
             if path.is_file():
                 eval_input_paths.append(path)
+    workflow_input_paths = [path for path in (workflow_path, status_path) if path.is_file()]
     input_paths = [
         path for name, path in paths.items()
         if name not in ("manifest", "paper_cards")
-    ] + paper_card_paths + connector_snapshot_paths + list(loop_paths.values()) + loop_scan_paths + eval_input_paths
+    ] + workflow_input_paths + paper_card_paths + connector_snapshot_paths + list(loop_paths.values()) + loop_scan_paths + eval_input_paths
     record = {
         "id": "A-" + uuid.uuid4().hex[:12],
         "created_at": generated_at,

@@ -11,6 +11,42 @@ import shutil
 import sys
 
 
+DEFAULT_WORKFLOW = {
+    "framing": "required",
+    "governance": "required",
+    "evidence": "required",
+    "data": "required",
+    "protocol": "required",
+    "compute": "adaptive",
+    "artifacts": "required",
+    "review": "required",
+    "iteration": "adaptive",
+    "evaluation": "adaptive",
+    "handoff": "required",
+}
+
+
+def add_workflow(science: pathlib.Path) -> pathlib.Path:
+    path = science / "workflow.json"
+    if path.exists():
+        return path
+    now = dt.datetime.now(dt.timezone.utc).isoformat()
+    value = {
+        "schema": "codex-science.workflow.v1",
+        "profile": "standard",
+        "domain": "general",
+        "created_at": now,
+        "updated_at": now,
+        "stages": DEFAULT_WORKFLOW,
+        "boundary": (
+            "Workflow coverage is navigation metadata; stage readiness does not establish "
+            "scientific correctness, ethics approval, safety, novelty, or publication readiness."
+        ),
+    }
+    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return path
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=pathlib.Path, required=True)
@@ -31,7 +67,8 @@ def main() -> int:
         return 2
     schema = study.get("schema")
     if schema == "codex-science.study.v2":
-        print("Project already uses codex-science.study.v2")
+        workflow = add_workflow(science)
+        print(f"Project already uses codex-science.study.v2; workflow available at {workflow}")
         return 0
     if schema != "codex-science.study.v1":
         print(f"ERROR: unsupported source schema: {schema!r}", file=sys.stderr)
@@ -89,6 +126,7 @@ def main() -> int:
     study["migrated_from"] = "codex-science.study.v1"
     study["migrated_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
     study_path.write_text(json.dumps(study, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    add_workflow(science)
     print(f"Migrated project to v2; backup preserved at {backup}")
     return 0
 

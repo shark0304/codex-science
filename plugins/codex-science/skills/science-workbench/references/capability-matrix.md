@@ -15,6 +15,7 @@ Codex Science is an independent implementation of publicly documented scientific
 | Iterative improvement loops | Frozen gates, pinned capabilities, append-only traces/evals/decisions, resource and stall limits | ready |
 | Scientific metadata retrieval | Read-only Crossref and PubMed connectors; OpenAlex connector with user API key; sanitized snapshots and explicit import | ready for Crossref/PubMed; OpenAlex requires key/credits |
 | Same-task scientific-agent evaluation | Versioned transparent suite, immutable raw outputs, deterministic grading, human rubric and paired comparison | ready for regression/exploratory comparison; no Claude result bundled |
+| One-stop research coordination | Unified service catalog and CLI, guided profiles, secret-free doctor, workflow dashboard, deterministic next actions, and blocking handoff | ready for local orchestration; active model/tool quality remains environment-dependent |
 | Scientific databases and specialist tools | Capability inventory and optional Codex plugins/MCP connectors | unavailable by default; varies by installation and authorization |
 | Native rich scientific rendering | Artifact workflow can use installed renderers and emits static fallbacks | degraded; plugin does not ship a proprietary native viewer |
 | Data locality and privacy controls | Local ledgers, secret exclusion and explicit transfer gates | ready for local files; model/provider data handling remains governed by the active Codex deployment |

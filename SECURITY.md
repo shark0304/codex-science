@@ -9,3 +9,5 @@ Codex Science intentionally does not execute or approve remote compute, publish 
 Third-party capability scan reports are triage aids, not guarantees. Review the complete pinned checkout, dependency chain, license, network behavior, credential access, and data destination before marking a capability approved. Runtime authorization in Codex remains separate from registry trust.
 
 Scientific connectors accept provider credentials only through documented environment variables. Never commit those variables, copied request headers, unsanitized URLs, or private provider responses. Connector snapshots are metadata inputs and must be reviewed for data-use or redistribution restrictions before publication.
+
+The unified doctor reports only whether documented credential variables are configured; it never records their values. Tool discovery and credential presence do not establish authorization, quota, compatibility, or permission to transfer research data.
