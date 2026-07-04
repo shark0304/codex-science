@@ -14,7 +14,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins/codex-science"
 MANIFEST = PLUGIN / ".codex-plugin/plugin.json"
 MARKETPLACE = ROOT / ".agents/plugins/marketplace.json"
-SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?$")
+SEMVER = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
+)
 SKILL_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SECRET_PATTERNS = {
     "GitHub token": re.compile(r"\b(?:ghp|github_pat)_[A-Za-z0-9_]{20,}\b"),
@@ -156,9 +159,9 @@ def validate_skills(errors: list[str]) -> int:
 
 
 def validate_scripts(errors: list[str]) -> int:
-    scripts = sorted((PLUGIN / "skills/science-workbench/scripts").glob("*.py"))
+    scripts = sorted((PLUGIN / "skills").glob("*/scripts/*.py"))
     if not scripts:
-        errors.append("science-workbench: no Python scripts found")
+        errors.append("plugin: no Python scripts found")
         return 0
     for path in scripts:
         text = path.read_text(encoding="utf-8")
@@ -208,7 +211,7 @@ def main() -> int:
         return 2
     print(
         "Codex Science release validation: PASS "
-        f"({skill_count} skills, {script_count} workbench scripts, manifests and secret scan verified)"
+        f"({skill_count} skills, {script_count} plugin scripts, manifests and secret scan verified)"
     )
     return 0
 

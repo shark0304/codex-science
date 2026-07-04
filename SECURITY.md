@@ -5,3 +5,5 @@ Do not open a public issue containing credentials, private datasets, participant
 For a sensitive vulnerability, use GitHub private vulnerability reporting for this repository. Include the affected version, reproducible impact, and the minimum safe evidence needed to validate the report.
 
 Codex Science intentionally does not execute or approve remote compute, publish manuscripts, transfer data, or authorize clinical/wet-lab actions. Those boundaries must remain explicit in contributions.
+
+Third-party capability scan reports are triage aids, not guarantees. Review the complete pinned checkout, dependency chain, license, network behavior, credential access, and data destination before marking a capability approved. Runtime authorization in Codex remains separate from registry trust.

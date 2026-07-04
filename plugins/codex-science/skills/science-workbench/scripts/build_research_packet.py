@@ -74,6 +74,18 @@ def main() -> int:
         "review": science / "reviews/REVIEW.md",
         "forks": science / "forks.jsonl",
     }
+    loop_paths: dict[str, pathlib.Path] = {}
+    if (science / "loop/contract.json").is_file():
+        loop_paths = {
+            "loop_contract": science / "loop/contract.json",
+            "loop_registry": science / "loop/capabilities.jsonl",
+            "loop_capabilities": science / "loop/capability-lock.json",
+            "loop_iterations": science / "loop/iterations.jsonl",
+            "loop_traces": science / "loop/traces.jsonl",
+            "loop_evaluations": science / "loop/evaluations.jsonl",
+            "loop_decisions": science / "loop/decisions.jsonl",
+            "loop_handoff": science / "loop/NEXT.md",
+        }
     missing = [
         str(path)
         for name, path in paths.items()
@@ -81,6 +93,10 @@ def main() -> int:
     ]
     if missing:
         print("ERROR: missing project files: " + ", ".join(missing), file=sys.stderr)
+        return 2
+    loop_missing = [str(path) for path in loop_paths.values() if not path.is_file()]
+    if loop_missing:
+        print("ERROR: incomplete loop state: " + ", ".join(loop_missing), file=sys.stderr)
         return 2
     try:
         study = json.loads(paths["study"].read_text(encoding="utf-8"))
@@ -97,6 +113,20 @@ def main() -> int:
         compute = read_jsonl(paths["compute"])
         artifacts = read_jsonl(paths["manifest"])
         forks = read_jsonl(paths["forks"])
+        loop_contract = (
+            json.loads(loop_paths["loop_contract"].read_text(encoding="utf-8"))
+            if loop_paths
+            else {}
+        )
+        loop_capabilities = (
+            json.loads(loop_paths["loop_capabilities"].read_text(encoding="utf-8"))
+            if loop_paths
+            else {}
+        )
+        loop_iterations = read_jsonl(loop_paths["loop_iterations"]) if loop_paths else []
+        loop_traces = read_jsonl(loop_paths["loop_traces"]) if loop_paths else []
+        loop_evaluations = read_jsonl(loop_paths["loop_evaluations"]) if loop_paths else []
+        loop_decisions = read_jsonl(loop_paths["loop_decisions"]) if loop_paths else []
     except (json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -109,6 +139,66 @@ def main() -> int:
         for name, value in capabilities.get("capabilities", {}).items()
         if isinstance(value, dict)
     ]
+    loop_sections = []
+    if loop_paths:
+        locked = loop_capabilities.get("capabilities", [])
+        if not isinstance(locked, list):
+            locked = []
+        loop_sections = [
+            "## Closed-loop improvement",
+            f"Objective: {loop_contract.get('objective', '')}\n\n"
+            + "Current handoff:\n\n"
+            + loop_paths["loop_handoff"].read_text(encoding="utf-8"),
+            "### Locked external capabilities",
+            table(
+                ["ID", "Kind", "Revision", "Trust", "Scan", "Invocation"],
+                [
+                    [item.get("id"), item.get("kind"), item.get("revision"), item.get("trust"), item.get("scan_status"), item.get("invocation")]
+                    for item in locked
+                    if isinstance(item, dict)
+                ],
+            ),
+            "### Loop iterations and decisions",
+            table(
+                ["Iteration", "Sequence", "Objective", "Decision ID", "Decision", "Progress"],
+                [
+                    [
+                        item.get("id"),
+                        item.get("sequence"),
+                        item.get("objective"),
+                        next(
+                            (decision.get("id") for decision in loop_decisions if decision.get("iteration_id") == item.get("id")),
+                            "",
+                        ),
+                        next(
+                            (decision.get("decision") for decision in loop_decisions if decision.get("iteration_id") == item.get("id")),
+                            "open",
+                        ),
+                        next(
+                            (decision.get("progress") for decision in loop_decisions if decision.get("iteration_id") == item.get("id")),
+                            "",
+                        ),
+                    ]
+                    for item in loop_iterations
+                ],
+            ),
+            "### Loop traces",
+            table(
+                ["ID", "Iteration", "Status", "Capabilities", "Cost", "Summary"],
+                [
+                    [item.get("id"), item.get("iteration_id"), item.get("status"), item.get("capability_ids"), item.get("cost"), item.get("summary")]
+                    for item in loop_traces
+                ],
+            ),
+            "### Loop evaluations",
+            table(
+                ["ID", "Iteration", "Gate", "Verdict", "Score", "Summary"],
+                [
+                    [item.get("id"), item.get("iteration_id"), item.get("gate_id"), item.get("verdict"), item.get("score"), item.get("summary")]
+                    for item in loop_evaluations
+                ],
+            ),
+        ]
     sections = [
         f"# {study.get('title', 'Research packet')}",
         f"Generated: `{generated_at}`  \nStudy status: `{study.get('status', 'unknown')}`  \nStudy ID: `{study.get('id', 'unknown')}`",
@@ -165,6 +255,7 @@ def main() -> int:
             ["ID", "Source", "Destination", "Reason"],
             [[item.get("id"), item.get("source_study_id"), item.get("destination_root"), item.get("reason")] for item in forks],
         ),
+        *loop_sections,
         "## Independent review",
         paths["review"].read_text(encoding="utf-8"),
         "## Lab notes",
@@ -175,10 +266,20 @@ def main() -> int:
     output.write_text("\n\n".join(sections) + "\n", encoding="utf-8")
 
     # Exclude the mutable artifact manifest from input hashes to avoid a self-reference cycle.
+    loop_scan_paths = []
+    if loop_paths:
+        for item in loop_capabilities.get("capabilities", []):
+            if not isinstance(item, dict):
+                continue
+            scan = item.get("scan_report")
+            if isinstance(scan, dict) and isinstance(scan.get("path"), str):
+                path = pathlib.Path(scan["path"])
+                if path.is_file():
+                    loop_scan_paths.append(path)
     input_paths = [
         path for name, path in paths.items()
         if name not in ("manifest", "paper_cards")
-    ] + paper_card_paths
+    ] + paper_card_paths + list(loop_paths.values()) + loop_scan_paths
     record = {
         "id": "A-" + uuid.uuid4().hex[:12],
         "created_at": generated_at,

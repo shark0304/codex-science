@@ -13,6 +13,9 @@ It is an independent implementation inspired by publicly documented scientific-a
 - Environment and tool capability snapshots that intentionally omit credentials.
 - SHA-256 lineage and mutation detection for local datasets, outputs, and artifacts.
 - Deterministic structural/reproducibility audit plus an adversarial scientific-review protocol.
+- A bounded plan → trace → eval → decision loop with explicit success, budget and no-progress gates.
+- A capability registry that pins third-party skills, plugins, MCP tools and services to reviewed revisions.
+- Static capability inventory and risk scanning before external code becomes eligible for a loop plan.
 - Timestamped Markdown research packets suitable for supervisors, collaborators, reviewers, and future sessions.
 
 ## Install
@@ -41,6 +44,7 @@ question
    -> immutable result events
    -> reproducible figures and manuscripts
    -> independent review
+   -> bounded trace/eval/repair loop when gates fail
    -> research packet
 ```
 
@@ -63,6 +67,24 @@ python3 "$SCRIPTS/build_research_packet.py" --root .
 
 Every command provides `--help`. None of the included scripts submit compute jobs, publish manuscripts, transfer datasets, or grant approvals. External actions remain subject to Codex permissions and explicit user authorization.
 
+## Loop Engine
+
+Initialize a closed loop only after the study and acceptance gates are understood:
+
+```bash
+LOOP=/path/to/codex-science/plugins/codex-science/skills/loop-engine/scripts
+
+python3 "$LOOP/loop_engine.py" --root . init \
+  --objective "Resolve the main evidence gap and reproduce the result" \
+  --gate "evidence:Every material claim has verified support" \
+  --gate "reproducibility:A clean rerun meets the preregistered threshold" \
+  --max-iterations 6 --stall-limit 2 --min-progress 0.05
+```
+
+Each iteration is recorded as plan, trace, evaluation and decision events. The engine refuses premature success and refuses continued work after iteration, budget or no-progress limits. It writes `.science/loop/NEXT.md` as the portable next-pass handoff.
+
+Third-party repositories are adapters, not vendored dependencies. Check out an immutable revision, scan it with `scan_capability.py`, review its scripts and license, then register that exact revision with `capability_registry.py`. Stars and inclusion in an awesome list are discovery signals—not a security or scientific-quality verdict.
+
 ## Public capability alignment
 
 The plugin aligns with the public Claude Science workflow at the methods layer: coordinating and specialist workflows, literature synthesis, auditable artifacts, local research state, compute planning, persistent memory, study forks, reviewer passes, and optional scientific tools.
@@ -70,6 +92,7 @@ The plugin aligns with the public Claude Science workflow at the methods layer: 
 Some product capabilities necessarily remain environment-dependent:
 
 - Scientific databases and connectors require separate installation, authentication, licensing, and institutional authorization.
+- External skills and plugins require independent license, security, data-boundary and compatibility review before approval in a loop.
 - SSH, SLURM, Modal and GPU execution require those tools and an approved target.
 - Native 3D molecular, protein, genome-track, or other rich rendering requires an installed renderer; Codex Science records the lineage and requires a static fallback.
 - Independent reviewer-agent status requires a fresh context or explicitly authorized reviewer agent.
@@ -88,7 +111,7 @@ The explicit engineering boundary lives in `capability-matrix.md` inside the coo
 ## Develop and test
 
 ```bash
-python3 -m py_compile plugins/codex-science/skills/science-workbench/scripts/*.py
+python3 -m compileall -q plugins tests scripts
 python3 -m unittest discover -s tests -v
 python3 scripts/validate_release.py
 ```
@@ -100,6 +123,8 @@ python3 scripts/validate_release.py
 - [BioMysteryBench evaluation design](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench)
 - [Deterministic retrieval for scientific agents](https://www.anthropic.com/research/agents-in-biology)
 - [Codex plugin documentation](https://developers.openai.com/codex/plugins/build)
+- [OpenAI agent improvement loop](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop)
+- [OpenAI iterative repair loops](https://developers.openai.com/cookbook/examples/codex/build_iterative_repair_loops_with_codex)
 
 ## License
 

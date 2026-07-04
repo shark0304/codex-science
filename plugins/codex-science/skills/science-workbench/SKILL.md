@@ -1,6 +1,6 @@
 ---
 name: science-workbench
-description: Coordinate auditable, reproducible scientific research from question framing through literature, datasets, experiments, local or remote compute, scientific figures and manuscripts, independent review, forking, and final handoff. Use for end-to-end research projects, vague scientific questions, multi-stage analyses, long-running studies, research workspaces, or requests for a Claude Science-style scientific workbench in Codex.
+description: Coordinate auditable, reproducible scientific research from question framing through literature, datasets, experiments, local or remote compute, scientific artifacts, bounded improvement loops, independent review, forking, and final handoff. Use for end-to-end research projects, vague scientific questions, multi-stage analyses, long-running studies, research workspaces, repeated eval-and-repair work, or requests for a Claude Science-style scientific workbench in Codex.
 ---
 
 # Science Workbench
@@ -11,7 +11,7 @@ Coordinate a research chain another scientist can inspect: question -> evidence 
 
 - **Quick**: one source, narrow calculation, or short critique. Do not create a full workspace unless useful.
 - **Standard**: multi-source synthesis, dataset analysis, experiment, figure, or report. Maintain the relevant ledgers and provenance.
-- **Deep**: long-running study, thesis/grant direction, publication, replication, expensive compute, or high-stakes conclusion. Use all gates, independent review, and a final research packet.
+- **Deep**: long-running study, thesis/grant direction, publication, replication, expensive compute, high-stakes conclusion, or repeated improvement. Use all gates, `$loop-engine`, independent review, and a final research packet.
 
 ## Initialize and inspect
 
@@ -31,8 +31,9 @@ Do not overwrite an existing `.science/` directory. Run `migrate_project.py` whe
 2. **Evidence**: use `$literature-studio` for searches, source intake, paper cards, claim ledgers, contradictions, and gap analysis.
 3. **Data and experiments**: use `$experiment-studio` for dataset lineage, preregistration, environment identity, controlled compute, immutable results, sensitivity analysis, and forks.
 4. **Artifacts**: use `$artifact-studio` for code-backed figures, tables, notebooks, rich scientific views, reports, manuscripts, and visual QA.
-5. **Review**: use `$science-reviewer` in an independent context when available and authorized. Otherwise perform a labeled adversarial pass and disclose that independence is degraded.
-6. **Handoff**: run structural/integrity validation, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
+5. **Closed-loop improvement**: use `$loop-engine` when work must repeat until explicit evidence, reproducibility, quality, safety, or performance gates pass. Register only pinned and reviewed external capabilities.
+6. **Review**: use `$science-reviewer` in an independent context when available and authorized. Otherwise perform a labeled adversarial pass and disclose that independence is degraded.
+7. **Handoff**: run structural/integrity validation, build the research packet, and state what is supported, unresolved, unavailable, or not performed.
 
 Do not claim a specialist pass occurred unless it actually occurred. If a required skill, renderer, connector, database, compute backend, or reviewer context is unavailable, record `degraded` or `unavailable` and continue only within the supported boundary.
 
@@ -41,6 +42,7 @@ Do not claim a specialist pass occurred unless it actually occurred. If a requir
 - Update `.science/LAB_NOTES.md` after meaningful work with completed steps, failed approaches and why, unresolved questions, and the next falsifiable action.
 - Keep plans immutable after outcome inspection; append deviations and result events.
 - Register sources, claims, searches, paper cards, datasets, transformations, experiment plans/results, compute approvals/results, environments, artifacts, reviews, and forks.
+- For iterative work, preserve loop contracts, capability locks, traces, evaluations, failures, decisions, resource limits, and stop reasons under `.science/loop/`.
 - Use `fork_study.py` for a new analytical branch; use version control for code and full-project history.
 - Never store credentials, participant identifiers, protected health information, controlled raw data, or proprietary content in public ledgers.
 
@@ -54,6 +56,7 @@ Pause before remote/paid/shared compute, large downloads, external writes, publi
 
 ```bash
 python3 scripts/validate_science_project.py --root <project-root>
+python3 ../loop-engine/scripts/validate_loop.py --root <project-root>  # when .science/loop exists
 python3 scripts/audit_project.py --root <project-root>
 python3 scripts/build_research_packet.py --root <project-root>
 ```

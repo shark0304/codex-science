@@ -21,6 +21,15 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 ├── artifacts/manifest.jsonl
 ├── reviews/
 │   └── REVIEW.md
+├── loop/                         # optional bounded improvement loop
+│   ├── contract.json
+│   ├── capabilities.jsonl
+│   ├── capability-lock.json
+│   ├── iterations.jsonl
+│   ├── traces.jsonl
+│   ├── evaluations.jsonl
+│   ├── decisions.jsonl
+│   └── NEXT.md
 ├── runs/
 └── forks.jsonl
 ```
@@ -33,6 +42,7 @@ Use `.science/` as an append-oriented control plane alongside the user's existin
 - Store one valid JSON object per JSONL line. Append corrections with a `supersedes` reference.
 - Hash local inputs, datasets, results and artifacts with SHA-256.
 - Never store credentials, access tokens, participant identifiers, protected health information, or restricted raw data in ledgers.
+- Pin external capabilities to immutable revisions. Popularity and registry inclusion are not trust signals.
 
 ## Evidence
 
@@ -53,3 +63,7 @@ Append `plan`, `approval` and `result` events. Remote, paid, shared or sensitive
 ## Artifacts, reviews and forks
 
 Artifacts bind path, kind, SHA-256, byte size, generating command/notebook, input hashes and environment. Reviews classify findings and preserve unresolved risks. Fork records identify source study, destination, reason and timestamp. A valid manifest proves identity and lineage, not scientific validity.
+
+## Closed-loop events
+
+Fix objective, required evaluation gates, iteration limit, stall limit, progress threshold and optional budget before the first loop trace. Each iteration follows plan, trace, evaluation and decision. Only approved, scanned and pinned capability IDs may appear in plans. A success decision requires every declared gate to pass in the same iteration. Stop rather than continuing beyond resource or no-progress limits.

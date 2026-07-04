@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Science Loop Engine"
+  short_description: "Closed-loop research iteration and eval gates"
+  default_prompt: "Use $loop-engine to run a bounded research improvement loop with explicit evaluation gates."

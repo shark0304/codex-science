@@ -10,6 +10,7 @@
 6. **Artifact gate**: outputs bind to inputs, code/command, environment and SHA-256; actual renderings were inspected.
 7. **Review gate**: structural audit and adversarial scientific review completed; critical findings are resolved or block release.
 8. **Handoff gate**: research packet contains evidence, methods, results, failures, limitations, review, provenance and reproduction commands.
+9. **Iteration gate**: repeated work has a frozen loop contract, pinned capabilities, trace evidence, explicit eval verdicts, bounded resources and a valid continue/succeed/stop decision.
 
 ## State labels
 

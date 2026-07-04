@@ -12,6 +12,7 @@ Codex Science is an independent implementation of publicly documented scientific
 | Persistent session memory | Append-oriented lab notes, plans, event ledgers and version-control guidance | ready |
 | Fork research sessions | Metadata-preserving study forks plus version-control workflow | ready |
 | Reviewer agent | Dedicated adversarial reviewer skill and deterministic audit | degraded when independent context/agent is unavailable |
+| Iterative improvement loops | Frozen gates, pinned capabilities, append-only traces/evals/decisions, resource and stall limits | ready |
 | Scientific databases and specialist tools | Capability inventory and optional Codex plugins/MCP connectors | unavailable by default; varies by installation and authorization |
 | Native rich scientific rendering | Artifact workflow can use installed renderers and emits static fallbacks | degraded; plugin does not ship a proprietary native viewer |
 | Data locality and privacy controls | Local ledgers, secret exclusion and explicit transfer gates | ready for local files; model/provider data handling remains governed by the active Codex deployment |

@@ -8,6 +8,7 @@ import hashlib
 import json
 import pathlib
 import re
+import subprocess
 import sys
 
 
@@ -183,6 +184,32 @@ def main() -> int:
     for relative in DIRECTORIES:
         if not (science / relative).is_dir():
             errors.append(f"missing required directory: {science / relative}")
+    loop_validation = "not-present"
+    if (science / "loop/contract.json").is_file():
+        loop_validator = (
+            pathlib.Path(__file__).resolve().parents[2]
+            / "loop-engine/scripts/validate_loop.py"
+        )
+        if not loop_validator.is_file():
+            errors.append(f"loop validator is unavailable: {loop_validator}")
+        else:
+            try:
+                process = subprocess.run(
+                    [sys.executable, str(loop_validator), "--root", str(args.root)],
+                    check=False,
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    timeout=60,
+                )
+            except subprocess.TimeoutExpired:
+                loop_validation = "failed"
+                errors.append("loop validation exceeded the 60-second integrity-check limit")
+            else:
+                loop_validation = "passed" if process.returncode == 0 else "failed"
+                if process.returncode != 0:
+                    errors.append("loop validation failed:\n" + process.stdout.rstrip())
+
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
@@ -385,7 +412,8 @@ def main() -> int:
         f"({len(sources)} sources, {len(card_ids)} paper cards, {len(claim_ids)} claims, "
         f"{len(dataset_ids)} datasets, {len(experiment_ids)} experiment events, "
         f"{len(compute_ids)} compute events, {len(artifacts)} artifacts; "
-        f"file_hashes={'skipped' if args.skip_file_hashes else 'verified'})"
+        f"file_hashes={'skipped' if args.skip_file_hashes else 'verified'}, "
+        f"loop={loop_validation})"
     )
     return 0
 
